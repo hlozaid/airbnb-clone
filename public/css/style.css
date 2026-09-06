@@ -1,9 +1,18 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 
-body{
+body {
     font-family: "Plus Jakarta Sans", sans-serif !important;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
 }
+
+.container {
+    flex: 1;
+}
+
+
 
 /* navbar */
 .navbar {
@@ -83,22 +92,43 @@ body{
 
 /* cards */
 
-.card{
+.card {
     border: none !important;
     margin-bottom: 2rem;
 }
 
-.card-img-top{
+.card-img-top {
     border-radius: 1rem !important;
     width: 100% !important;
     object-fit: cover !important;
 }
 
-.card-body{
+.card-body {
     padding: 0 !important;
 }
 
 .card-text p {
     font-weight: 400 !important;
-    
+
+}
+
+.listing-link {
+    text-decoration: none;
+}
+
+/* Card Effect  */
+.card-img-overlay {
+    opacity: 0;
+}
+
+.card-img-overlay:hover {
+    opacity: 0.2;
+    background-color: white;
+}
+
+/* New page  */
+
+.add-btn{
+    background-color: #fe424d !important;
+    border: none !important;
 }
