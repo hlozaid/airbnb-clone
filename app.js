@@ -7,7 +7,9 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const { listingSchema } = require("./schema.js");
+const { listingSchema, reviewSchema } = require("./schema.js");
+
+const Review = require("./models/review.js");
 
 const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -50,6 +52,19 @@ const validateListing = (req, res, next) => {
   next();
 };
 
+const validataReview = (req, res, next) => {
+  if (!req.body || !req.body.review) {
+    return next(new ExpressError(400, "Review is Required!"));
+  }
+  let { error } = reviewSchema.validate(req.body);
+  if (error) {
+    let errMsg = error.details.map((el) => el.message).join(", ");
+    return next(new ExpressError(400, errMsg));
+  }
+  next();
+};
+
+
 // Index Route
 app.get(
   "/listings",
@@ -69,7 +84,7 @@ app.get(
   "/listings/:id",
   wrapAsync(async (req, res) => {
     let { id } = req.params;
-    const listing = await Listing.findById(id);
+    const listing = await Listing.findById(id).populate("reviews");
     if (!listing) {
       throw new ExpressError(404, "Listing not found");
     }
@@ -121,6 +136,22 @@ app.delete(
     res.redirect("/listings");
   }),
 );
+
+//Reviews
+//post Route
+app.post("/listings/:id/reviews", validataReview,
+  wrapAsync(async (req, res) => {
+    let listing = await Listing.findById(req.params.id);
+    let newReview = new Review(req.body.review)
+
+    listing.reviews.push(newReview);
+
+    await newReview.save();
+    await listing.save();
+
+    console.log("review Saved!");
+    res.redirect(`/listings/${listing._id}`);
+  }));
 
 // Catch-all for unmatched routes
 app.all("*splat", (req, res, next) => {
