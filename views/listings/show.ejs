@@ -11,21 +11,41 @@
       <img src="<%= listing.image.url %>" class="card-img-top show-img" alt="Image of <%= listing.title %>" />
       <div class="card-body">
         <!-- <h5 class="card-title"><%= listing.title %></h5> -->
-        <p class="card-text">Owned by <i><%= listing.owner.username %> </i></p>
+        <p class="card-text">Owned by <i>
+            <%= listing.owner.username %>
+          </i></p>
 
-        <p class="card-text"><%= listing.description %></p>
-        <p class="card-text">&#8377;<%= listing.price ? listing.price.toLocaleString("en-IN") : "0" %></p>
-        <p class="card-text"><%= listing.location %></p>
-        <p class="card-text"><%= listing.country %></p>
+        <p class="card-text">
+          <%= listing.description %>
+        </p>
+        <p class="card-text">&#8377;<%= listing.price ? listing.price.toLocaleString("en-IN") : "0" %>
+        </p>
+        <p class="card-text">
+          <%= listing.location %>
+        </p>
+        <p class="card-text">
+          <%= listing.country %>
+        </p>
       </div>
     </div>
 
+    <br>
+
+    <% if(currUser._id.equals(listing.owner)) { %>
     <div class="col-6 offset-3 mb-3 d-flex align-items-center gap-3">
-      <a href="/listings/<%= listing.id %>/edit" class="btn btn-dark">Edit</a>
-      <form method="POST" action="/listings/<%= listing.id %>?_method=DELETE" class="m-0">
+      <a
+        href="/listings/<%= listing.id %>/edit"
+        class="btn btn-dark">
+        Edit
+      </a>
+
+      <form method="POST" action="/listings/<%= listing.id %>?_method=DELETE"
+        class="m-0">
         <button class="btn btn-danger">Delete</button>
       </form>
     </div>
+
+    <% } %>
 
     <div class="col-8 offset-3 mb-3">
       <hr />

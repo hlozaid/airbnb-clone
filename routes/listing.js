@@ -45,6 +45,7 @@ router.get(
       .populate("owner");
     if (!listing) {
       throw new ExpressError(404, "Listing not found");
+      res.redirect("/listings");
     }
     res.render("./listings/show.ejs", { listing });
   }),
