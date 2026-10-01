@@ -41,7 +41,11 @@ router.post(
 );
 
 // Edit Route
-router.get("/:id/edit", isLoggedIn, wrapAsync(listingController.editListing));
+router.get(
+  "/:id/edit",
+  isLoggedIn,
+  wrapAsync(listingController.renderEditForm),
+);
 
 // Update Route
 router.put(
@@ -52,6 +56,6 @@ router.put(
 );
 
 // Delete Route
-router.delete("/:id", isLoggedIn, wrapAsync(listingController.deleteListing));
+router.delete("/:id", isLoggedIn, wrapAsync(listingController.destroyListing));
 
 module.exports = router;
