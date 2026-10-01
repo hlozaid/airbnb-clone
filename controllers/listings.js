@@ -37,3 +37,17 @@ module.exports.editListing = async (req, res) => {
   }
   res.render("./listings/edit.ejs", { listing });
 };
+
+module.exports.updateListing = async (req, res) => {
+  let { id } = req.params;
+  await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+  req.flash("success", "Listing Updated!");
+  res.redirect(`/listings/${id}`);
+};
+
+module.exports.deleteListing = async (req, res) => {
+  let { id } = req.params;
+  await Listing.findByIdAndDelete(id);
+  req.flash("success", "Listing Deleted");
+  res.redirect("/listings");
+};
