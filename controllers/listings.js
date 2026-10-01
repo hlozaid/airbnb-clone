@@ -28,3 +28,12 @@ module.exports.createListing = async (req, res) => {
   req.flash("success", "New Listing Created!");
   res.redirect("/listings");
 };
+
+module.exports.editListing = async (req, res) => {
+  let { id } = req.params;
+  const listing = await Listing.findById(id);
+  if (!listing) {
+    throw new ExpressError(404, "Listing not found");
+  }
+  res.render("./listings/edit.ejs", { listing });
+};

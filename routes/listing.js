@@ -41,18 +41,7 @@ router.post(
 );
 
 // Edit Route
-router.get(
-  "/:id/edit",
-  isLoggedIn,
-  wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    const listing = await Listing.findById(id);
-    if (!listing) {
-      throw new ExpressError(404, "Listing not found");
-    }
-    res.render("./listings/edit.ejs", { listing });
-  }),
-);
+router.get("/:id/edit", isLoggedIn, wrapAsync(listingController.editListing));
 
 // Update Route
 router.put(
