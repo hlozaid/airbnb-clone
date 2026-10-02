@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
-const ExpressError = require("./utils/ExpressError.js");
+const { setLocals, notFound, errorHandler } = require("./middleware.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
@@ -63,27 +63,16 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use((req, res, next) => {
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
-  res.locals.currUser = req.user;
-  next();
-});
+app.use(setLocals);
 
 
 
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/", userRouter); 
-// Catch-all for unmatched routes
-app.all("*splat", (req, res, next) => {
-  next(new ExpressError(404, "Page Not Found"));
-});
-
-app.use((err, req, res, next) => {
-  let { statusCode = 500, message = "Something went wrong" } = err;
-  res.status(statusCode).render("listings/error.ejs", { message });
-});
+// 404 aur error handler (hamesha routes ke baad)
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(8080, () => {
   console.log("Server is listening to port 8080");

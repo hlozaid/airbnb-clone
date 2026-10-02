@@ -1,7 +1,7 @@
 const Listing = require("./models/listings.js");
 const Review = require("./models/review.js");
 const ExpressError = require("./utils/ExpressError.js");
-const { listingSchema } = require("./schema.js");
+const { listingSchema, reviewSchema } = require("./schema.js");
 
 module.exports.validateListing = (req, res, next) => {
   // Guard against missing body / missing listing key BEFORE validating
@@ -10,6 +10,18 @@ module.exports.validateListing = (req, res, next) => {
   }
 
   let { error } = listingSchema.validate(req.body);
+  if (error) {
+    let errMsg = error.details.map((el) => el.message).join(", ");
+    return next(new ExpressError(400, errMsg));
+  }
+  next();
+};
+
+module.exports.validateReview = (req, res, next) => {
+  if (!req.body || !req.body.review) {
+    return next(new ExpressError(400, "Review is Required!"));
+  }
+  let { error } = reviewSchema.validate(req.body);
   if (error) {
     let errMsg = error.details.map((el) => el.message).join(", ");
     return next(new ExpressError(400, errMsg));
@@ -61,4 +73,27 @@ module.exports.isReviewAuthor = async (req, res, next) => {
     return res.redirect(`/listings/${id}`);
   }
   next();
+};
+// ---------- App-level middlewares (app.js me use hote hain) ----------
+
+// Flash messages aur logged-in user ko saare views me available karata hai
+module.exports.setLocals = (req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  res.locals.currUser = req.user;
+  next();
+};
+
+// Koi route match na ho to 404
+module.exports.notFound = (req, res, next) => {
+  next(new ExpressError(404, "Page Not Found"));
+};
+
+// Final error handler (4 arguments zaruri hain)
+module.exports.errorHandler = (err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+  let { statusCode = 500, message = "Something went wrong" } = err;
+  res.status(statusCode).render("listings/error.ejs", { message });
 };
