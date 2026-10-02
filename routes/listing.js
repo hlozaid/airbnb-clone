@@ -1,47 +1,40 @@
 const express = require("express");
 const router = express.Router();
-const Listing = require("../models/listings.js");
 const wrapAsync = require("../utils/wrapAsync.js");
-const { listingSchema } = require("../schema.js");
-const ExpressError = require("../utils/ExpressError.js");
-const { isLoggedIn, isOwner, validateListing, saveRedirectUrl } = require("../middleware.js");
-
+const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
 const listingController = require("../controllers/listings.js");
 
+// "/" -> Index + Create
+router
+  .route("/")
+  .get(wrapAsync(listingController.index))
+  .post(
+    isLoggedIn,
+    validateListing,
+    wrapAsync(listingController.createListing),
+  );
 
-// Index Route
-router.get("/", wrapAsync(listingController.index));
-
-// New listing route
+// New form ("/:id" se PEHLE hona chahiye, warna "new" ko id samajh lega)
 router.get("/new", isLoggedIn, listingController.renderNewForm);
 
-// Show Route
-router.get("/:id", wrapAsync(listingController.showListinng));
+// "/:id" -> Show + Update + Delete
+router
+  .route("/:id")
+  .get(wrapAsync(listingController.showListinng))
+  .put(
+    isLoggedIn,
+    isOwner,
+    validateListing,
+    wrapAsync(listingController.updateListing),
+  )
+  .delete(isLoggedIn, isOwner, wrapAsync(listingController.destroyListing));
 
-// Create route
-router.post(
-  "/",
-  isLoggedIn,
-  validateListing,
-  wrapAsync(listingController.createListing),
-);
-
-// Edit Route
+// Edit form
 router.get(
   "/:id/edit",
   isLoggedIn,
+  isOwner,
   wrapAsync(listingController.renderEditForm),
 );
-
-// Update Route
-router.put(
-  "/:id",
-  isLoggedIn,
-  validateListing,
-  wrapAsync(listingController.updateListing),
-);
-
-// Delete Route
-router.delete("/:id", isLoggedIn, wrapAsync(listingController.destroyListing));
 
 module.exports = router;

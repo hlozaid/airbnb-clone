@@ -1,4 +1,5 @@
 const Listing = require("../models/listings");
+const ExpressError = require("../utils/ExpressError.js");
 
 module.exports.index = async (req, res) => {
   const allListings = await Listing.find({});
@@ -16,7 +17,6 @@ module.exports.showListinng = async (req, res) => {
     .populate("owner");
   if (!listing) {
     throw new ExpressError(404, "Listing not found");
-    res.redirect("/listings");
   }
   res.render("./listings/show.ejs", { listing });
 };

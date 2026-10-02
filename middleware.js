@@ -1,5 +1,7 @@
 const Listing = require("./models/listings.js");
 const Review = require("./models/review.js");
+const ExpressError = require("./utils/ExpressError.js");
+const { listingSchema } = require("./schema.js");
 
 module.exports.validateListing = (req, res, next) => {
   // Guard against missing body / missing listing key BEFORE validating
@@ -31,6 +33,8 @@ module.exports.saveRedirectUrl = (req, res, next) => {
   next();
 };
 
+// Express 5 async middleware ke errors khud handle kar leta hai,
+// isliye yahan wrapAsync ki zarurat nahi.
 module.exports.isOwner = async (req, res, next) => {
   const { id } = req.params;
   const listing = await Listing.findById(id);

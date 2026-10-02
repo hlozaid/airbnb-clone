@@ -1,8 +1,12 @@
 const Listing = require("../models/listings");
 const Review = require("../models/review");
+const ExpressError = require("../utils/ExpressError.js");
 
 module.exports.createReviews = async (req, res) => {
   let listing = await Listing.findById(req.params.id);
+  if (!listing) {
+    throw new ExpressError(404, "Listing not found");
+  }
   let newReview = new Review(req.body.review);
 
   listing.reviews.push(newReview);
