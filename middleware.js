@@ -1,6 +1,20 @@
 const Listing = require("./models/listings.js");
 const Review = require("./models/review.js");
 
+module.exports.validateListing = (req, res, next) => {
+  // Guard against missing body / missing listing key BEFORE validating
+  if (!req.body || !req.body.listing) {
+    return next(new ExpressError(400, "Send valid data for listing"));
+  }
+
+  let { error } = listingSchema.validate(req.body);
+  if (error) {
+    let errMsg = error.details.map((el) => el.message).join(", ");
+    return next(new ExpressError(400, errMsg));
+  }
+  next();
+};
+
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
     req.session.redirectUrl = req.originalUrl;
