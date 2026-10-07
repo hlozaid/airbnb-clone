@@ -12,10 +12,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-<<<<<<< HEAD
     "@mapbox/mapbox-sdk": "^0.16.2",
-=======
->>>>>>> 7fb0d1c9406ce69558c460d0f1dcf81a49007cb6
     "bootstrap": "^5.3.8",
     "cloudinary": "^1.41.3",
     "connect-flash": "^0.1.1",

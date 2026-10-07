@@ -9,13 +9,8 @@ const listingSchema = new Schema({
   },
   description: String,
   image: {
-<<<<<<< HEAD
     url: String,
     filename: String,
-=======
-    url:String,
-    filename: String
->>>>>>> 7fb0d1c9406ce69558c460d0f1dcf81a49007cb6
   },
   price: Number,
   location: String,
@@ -30,7 +25,6 @@ const listingSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-<<<<<<< HEAD
   geometry: {
     type: {
       type: String, // Don't do `{ location: { type: String } }`
@@ -46,8 +40,6 @@ const listingSchema = new Schema({
     type:String,
     enum:["mountains","artic","farms", "deserts", "castles","pool","camping"]
   }
-=======
->>>>>>> 7fb0d1c9406ce69558c460d0f1dcf81a49007cb6
 });
 
 listingSchema.post("findOneAndDelete", async (listing) => {
