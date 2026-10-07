@@ -1,5 +1,4 @@
 <% layout("/layouts/boilerplate") %>
-<<<<<<< HEAD
 
 <style>
     /* Filters + toggle hamesha ek hi line me */
@@ -224,30 +223,3 @@
     slider.scrollLeft = startScroll - (e.pageX - startX);
   });
 </script>
-=======
-    
-            <h3 class="mt-3">All listing</h3>
-            <!-- card -->
-
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-2">
-                <% for(let listing of allListings){ %>
-                    <a href="/listings/<%= listing._id %>" class="listing-link">
-                        <div class="card col listing-card">
-                            <img src="<%=listing.image.url%>" class="card-img-top" alt="listing Image"
-                                style="height: 20rem;">
-                            <div class="card-img-overlay">discount</div>
-                            <div class="card-body">
-                                <p class="card-text">
-                                    <b>
-                                        <%= listing.title%>
-                                    </b> <br>
-                                    &#8377;<%= (listing.price || 0).toLocaleString("en-IN")%>/night
-                                </p>
-                            </div>
-                        </div>
-                    </a>
-                    <%}%>
-
-            </div>
-
->>>>>>> 7fb0d1c9406ce69558c460d0f1dcf81a49007cb6
