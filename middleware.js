@@ -3,6 +3,7 @@ const Review = require("./models/review.js");
 const ExpressError = require("./utils/ExpressError.js");
 const { listingSchema, reviewSchema } = require("./schema.js");
 const fs = require("fs");
+const { CATEGORIES } = require("./utils/categories.js");
 
 // Validation fail ho to multer ki save ki hui file delete kar do
 const discardUpload = (req) => {
@@ -89,6 +90,10 @@ module.exports.setLocals = (req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
+  // Search/filter defaults so navbar & views never hit an undefined variable
+  res.locals.q = "";
+  res.locals.activeCategory = "";
+  res.locals.categories = CATEGORIES;
   next();
 };
 

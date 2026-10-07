@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Review = require("./review.js");
+const { CATEGORY_VALUES } = require("../utils/categories.js");
 
 const listingSchema = new Schema({
   title: {
@@ -36,9 +37,9 @@ const listingSchema = new Schema({
       required: true,
     },
   },
-  category:{
-    type:String,
-    enum:["mountains","artic","farms", "deserts", "castles","pool","camping"]
+  category: {
+    type: String,
+    enum: CATEGORY_VALUES,
   }
 });
 

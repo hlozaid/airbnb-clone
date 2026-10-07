@@ -79,6 +79,20 @@
       </div>
 
       <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <select name="listing[category]" id="category" class="form-select" required>
+          <% if (!listing.category) { %>
+            <option value="" disabled selected>Choose a category</option>
+          <% } %>
+          <% for (let c of categories) { %>
+            <option value="<%= c.value %>" <%= listing.category === c.value ? "selected" : "" %>><%= c.label %></option>
+          <% } %>
+        </select>
+        <div class="invalid-feedback">Please choose a category.</div>
+        <div class="valid-feedback">Looks good!</div>
+      </div>
+
+      <div class="mb-3">
         <label for="location" class="form-label">Location</label>
 
         <input

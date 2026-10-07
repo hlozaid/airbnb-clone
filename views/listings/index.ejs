@@ -55,9 +55,23 @@
         transition: color 0.2s ease, opacity 0.2s ease;
     }
 
+    a.filter,
+    a.filter:hover {
+        color: inherit;
+        text-decoration: none;
+    }
+
     .filter:hover {
         color: #fe424d;
         opacity: 1;
+    }
+
+    /* Selected filter */
+    .filter.active {
+        color: #fe424d;
+        opacity: 1;
+        border-bottom: 2px solid #fe424d;
+        padding-bottom: 0.4rem;
     }
 
     .filter p {
@@ -103,56 +117,31 @@
     }
 </style>
 
+<%
+  // Filter/search links ek doosre ko preserve karte hain
+  const listUrl = (cat) => {
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+    if (cat) params.set("category", cat);
+    const qs = params.toString();
+    return "/listings" + (qs ? "?" + qs : "");
+  };
+  const activeLabel = (categories.find((c) => c.value === activeCategory) || {}).label;
+%>
+
 <div id="filters-wrapper">
   <div id="filters">
-    <div class="filter">
-      <div><i class="fa-solid fa-fire"></i></div>
-      <p>Trending</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-hotel"></i></div>
-      <p>Rooms</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-building-columns"></i></div>
-      <p>Iconic cities</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-mountain-sun"></i></div>
-      <p>Mountains</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-brands fa-fort-awesome"></i></div>
-      <p>Castles</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-person-swimming"></i></div>
-      <p>Amazing pool</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-campground"></i></div>
-      <p>Camping</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-tractor"></i></div>
-      <p>Farms</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-snowflake"></i></div>
-      <p>Arctic</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-earth-oceania"></i></div>
-      <p>Islands</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-igloo"></i></div>
-      <p>Domes</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-sailboat"></i></div>
-      <p>Boats</p>
-    </div>
+    <% for (let c of categories) { %>
+      <a
+        class="filter <%= activeCategory === c.value ? 'active' : '' %>"
+        href="<%= listUrl(activeCategory === c.value ? '' : c.value) %>"
+        draggable="false"
+        title="<%= activeCategory === c.value ? 'Click to remove filter' : 'Show ' + c.label %>"
+      >
+        <div><i class="<%= c.icon %>"></i></div>
+        <p><%= c.label %></p>
+      </a>
+    <% } %>
   </div>
 
   <div class="tax-toggle">
@@ -162,6 +151,25 @@
     </div>
   </div>
 </div>
+
+<% if (q || activeCategory) { %>
+  <div class="d-flex align-items-center gap-3 mt-4">
+    <p class="mb-0">
+      <b><%= allListings.length %></b>
+      <%= allListings.length === 1 ? "listing" : "listings" %>
+      <% if (q) { %> for "<b><%= q %></b>"<% } %>
+      <% if (activeLabel) { %> in <b><%= activeLabel %></b><% } %>
+    </p>
+    <a href="/listings" class="btn btn-sm btn-outline-dark">Clear</a>
+  </div>
+<% } %>
+
+<% if (allListings.length === 0) { %>
+  <div class="text-center my-5">
+    <h5>No listings found</h5>
+    <p class="text-muted">Try a different search or remove the filter.</p>
+  </div>
+<% } %>
 
 <!-- card -->
 <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
@@ -203,9 +211,11 @@
   let isDown = false;
   let startX = 0;
   let startScroll = 0;
+  let moved = false;
 
   slider.addEventListener("mousedown", (e) => {
     isDown = true;
+    moved = false;
     slider.classList.add("dragging");
     startX = e.pageX;
     startScroll = slider.scrollLeft;
@@ -220,6 +230,29 @@
   window.addEventListener("mousemove", (e) => {
     if (!isDown) return;
     e.preventDefault();
+    if (Math.abs(e.pageX - startX) > 5) moved = true;
     slider.scrollLeft = startScroll - (e.pageX - startX);
   });
+
+  // Drag karke chhodne par galti se filter link open na ho
+  slider.addEventListener(
+    "click",
+    (e) => {
+      if (moved) {
+        e.preventDefault();
+        e.stopPropagation();
+        moved = false;
+      }
+    },
+    true
+  );
+
+  // Selected filter ko slider ke beech me le aao
+  const activeFilter = slider.querySelector(".filter.active");
+  if (activeFilter) {
+    slider.scrollLeft +=
+      activeFilter.getBoundingClientRect().left -
+      slider.getBoundingClientRect().left -
+      (slider.clientWidth - activeFilter.offsetWidth) / 2;
+  }
 </script>
